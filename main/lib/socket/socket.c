@@ -5,7 +5,8 @@ void socket_server() {
 
 	// Create a socket that we will listen upon.
 	int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (sock < 0) {
+	if (sock < 0)
+	{
 		ESP_LOGE(tag, "socket: %d %s", sock, strerror(errno));
 		goto END;
 	}
@@ -15,49 +16,88 @@ void socket_server() {
 	serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
 	serverAddress.sin_port = htons(PORT_NUMBER);
 	int rc  = bind(sock, (struct sockaddr *)&serverAddress, sizeof(serverAddress));
-	if (rc < 0) {
+	if (rc < 0)
+	{
 		ESP_LOGE(tag, "bind: %d %s", rc, strerror(errno));
 		goto END;
 	}
 
 	// Flag the socket as listening for new connections.
-	rc = listen(sock, 5);
-	if (rc < 0) {
+	rc = listen(sock, 1);
+	if (rc < 0)
+	{
 		ESP_LOGE(tag, "listen: %d %s", rc, strerror(errno));
 		goto END;
 	}
 
-	while (1) {
+	int counter = 1;
+	while (1)
+	{
 		// Listen for a new client connection.
 		socklen_t clientAddressLength = sizeof(clientAddress);
 		int clientSock = accept(sock, (struct sockaddr *)&clientAddress, &clientAddressLength);
-		if (clientSock < 0) {
+		if (clientSock < 0)
+		{
 			ESP_LOGE(tag, "accept: %d %s", clientSock, strerror(errno));
 			goto END;
+		}
+		else
+		{
+			printf("New client\n");
 		}
 
 		// We now have a new client ...
 		int total =	10*1024;
 		int sizeUsed = 0;
 		char *data = malloc(total);
-
+		int counter = 1;
 		// Loop reading data.
-		while(1) {
-			ssize_t sizeRead = recv(clientSock, data + sizeUsed, total-sizeUsed, 0);
-			if (sizeRead < 0) {
+		while(counter)
+		{
+			ssize_t sizeRead = recv(clientSock, data + sizeUsed, total-sizeUsed, 1);
+			if (sizeRead < 0)
+			{
 				ESP_LOGE(tag, "recv: %d %s", sizeRead, strerror(errno));
 				goto END;
 			}
-			if (sizeRead == 0) {
+			if (sizeRead == 0)
+			{
 				break;
 			}
 			sizeUsed += sizeRead;
+			counter--;
 		}
 
 		// Finished reading data.
+
 		ESP_LOGD(tag, "Data read (size: %d) was: %.*s", sizeUsed, sizeUsed, data);
-		free(data);
-		close(clientSock);
+		int size;
+		if(strstr(data,"mystyle"))
+		{
+			printf("getting css\n");
+			size = sizeof("HTTP/1.1 200 OK\nCache-Control: no-cache\nContent-length: 34\nContent-Type: text/css\n\nbody{background-color: lightblue;}");
+			printf("size = %d\n", size);
+			send(clientSock, "HTTP/1.1 200 OK\nCache-Control: no-cache\nContent-length: 34\nContent-Type: text/css\n\nbody{background-color: lightblue;}",size,1);
+		}
+		else if (strstr(data,"index"))
+		{
+			printf("getting index\n");
+			size = sizeof("HTTP/1.1 200 OK\nContent-length: 47\nContent-Type: text/html\n\n<html><body><H1>Hello world!!</H1></body></html>html>");
+			printf("size = %d\n", size);
+			send(clientSock, "HTTP/1.1 200 OK\nContent-length: 47\nContent-Type: text/html\n\n<html><body><H1>Hello world!!</H1></body></html>",size,1);
+		}
+		
+				//<link rel=\"stylesheet\" type=\"text/css\" href=\"mystyle.css\">
+				// size = sizeof("HTTP/1.1 200 OK\nContent-length: 34\nContent-Type: text/html\n<H1>cyka blyat</H1></body></html>");
+				// printf("size = %d\n", size);
+				// send(clientSock, "HTTP/1.1 200 OK\nContent-length: 34\nContent-Type: text/html\n<H1>cyka blyat</H1></body></html>",size,1);
+
+				//  size = sizeof("<!DOCTYPE html><html><body><p>This is a paragraph.</p><p>This is another paragraph.</p></body></html>\r\n\r\n");
+				// printf("size = %d\n", size);
+				// send(clientSock, "<!DOCTYPE html><html><body><p>This is a paragraph.</p><p>This is another paragraph.</p></body></html>\r\n\r\n",size,1);
+				free(data);
+				close(clientSock);
+				printf("---------------------------------------------------------------------------------------------------------------\n");
 	}
 	END:
 	vTaskDelete(NULL);
