@@ -94,7 +94,7 @@ void socket_server() {
 		else
 		{
 			printf("404");
-			char str[] =  "HTTP/1.1 404 Not Found\n";
+			char str[] =  "HTTP/1.1 404 Not Found\nContent-length: 48\nContent-Type: text/html\n\n<html><body><H1>404 NOT FOUND</H1></body></html>";
 			size = sizeof(str);
 			printf("response = \n%s\n", str);
 			printf("size = %d\n", size);
