@@ -4,4 +4,4 @@
 # (Uses default behaviour of compiling all source files in directory, adding 'include' to include path.)
 
 
-COMPONENT_SRCDIRS := src lib/socket lib/wifi
+COMPONENT_SRCDIRS := src lib/socket lib/wifi lib/http

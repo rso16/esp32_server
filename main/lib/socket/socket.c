@@ -70,23 +70,37 @@ void socket_server() {
 
 		// Finished reading data.
 
-		ESP_LOGD(tag, "Data read (size: %d) was: %.*s", sizeUsed, sizeUsed, data);
-		int size;
+		ESP_LOGD("tag", "Data read (size: %d) was: %.*s", sizeUsed, sizeUsed, data);
+		size_t size;
 		if(strstr(data,"mystyle"))
 		{
 			printf("getting css\n");
-			size = sizeof("HTTP/1.1 200 OK\nCache-Control: no-cache\nContent-length: 34\nContent-Type: text/css\n\nbody{background-color: lightblue;}");
+
+			char str[] = "HTTP/1.1 200 OK\nContent-length: 34\nContent-Type: text/plain\n\nbody{background-color: lightblue;}";
+			printf("response = \n%s\n", str);
+			size = sizeof(str);
 			printf("size = %d\n", size);
-			send(clientSock, "HTTP/1.1 200 OK\nCache-Control: no-cache\nContent-length: 34\nContent-Type: text/css\n\nbody{background-color: lightblue;}",size,1);
+			send(clientSock, str,size,1);
 		}
 		else if (strstr(data,"index"))
 		{
 			printf("getting index\n");
-			size = sizeof("HTTP/1.1 200 OK\nContent-length: 47\nContent-Type: text/html\n\n<html><body><H1>Hello world!!</H1></body></html>html>");
+			char str[] = "HTTP/1.1 200 OK\nContent-length: 113\nContent-Type: text/html\n\n<html><head><link rel=stylesheet type=text/css href=mystyle.css></head><body><H1>Hello world!!</H1></body></html>";
+			size = sizeof(str);
+			printf("response = \n%s\n", str);
 			printf("size = %d\n", size);
-			send(clientSock, "HTTP/1.1 200 OK\nContent-length: 47\nContent-Type: text/html\n\n<html><body><H1>Hello world!!</H1></body></html>",size,1);
+			send(clientSock, str,size,1);
 		}
-		
+		else
+		{
+			printf("404");
+			char str[] =  "HTTP/1.1 404 Not Found\n";
+			size = sizeof(str);
+			printf("response = \n%s\n", str);
+			printf("size = %d\n", size);
+			send(clientSock, str,size,1);
+		}
+
 				//<link rel=\"stylesheet\" type=\"text/css\" href=\"mystyle.css\">
 				// size = sizeof("HTTP/1.1 200 OK\nContent-length: 34\nContent-Type: text/html\n<H1>cyka blyat</H1></body></html>");
 				// printf("size = %d\n", size);
