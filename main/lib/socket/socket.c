@@ -82,11 +82,23 @@ void socket_server() {
 			printf("size = %d\n", size);
 			send(clientSock, str,size,1);
 		}
-		else if (strstr(data,"index"))
+		else if (strstr(data,"index") && !(strstr(data,"img")))
 		{
 			printf("getting index\n");
-			char str[] = "HTTP/1.1 200 OK\nContent-length: 113\nContent-Type: text/html\n\n<html><head><link rel=stylesheet type=text/css href=mystyle.css></head><body><H1>Hello world!!</H1></body></html>";
+			char str[] = "HTTP/1.1 200 OK\nContent-length: 117\nContent-Type: text/html\n\n<html><head><link rel=stylesheet type=text/css href=mystyle.css></head><body><H1>Hello world!!</H1><img src=img.png/></body></html>";
 			size = sizeof(str);
+			printf("response = \n%s\n", str);
+			printf("size = %d\n", size);
+			send(clientSock, str,size,1);
+		}
+		else if(strstr(data,"img"))
+		{
+			char httpstr[] = "HTTP/1.1 200 OK\nContent-length:  377\nContent-Type: image/png\nContent-Transfer-Encoding: binary\ncharset=ISO-8859-4\n\n";
+			printf("getting img\n");
+			size = 377 + sizeof(httpstr);
+			char str[size];
+			strcpy(str, httpstr);
+			strcat(str, img);
 			printf("response = \n%s\n", str);
 			printf("size = %d\n", size);
 			send(clientSock, str,size,1);
