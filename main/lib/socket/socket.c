@@ -1,5 +1,7 @@
 #include"socket.h"
-void socket_server() {
+void socket_server()
+{
+	printf("test!!!!!\n");
 	struct sockaddr_in clientAddress;
 	struct sockaddr_in serverAddress;
 
@@ -76,7 +78,7 @@ void socket_server() {
 		{
 			printf("getting css\n");
 
-			char str[] = "HTTP/1.1 200 OK\nContent-length: 34\nContent-Type: text/plain\n\nbody{background-color: lightblue;}";
+			char str[] = "HTTP/1.1 200 OK\nContent-length: 34\nContent-Type: text/css\n\nbody{background-color: lightblue;}";
 			printf("response = \n%s\n", str);
 			size = sizeof(str);
 			printf("size = %d\n", size);
@@ -85,15 +87,16 @@ void socket_server() {
 		else if (strstr(data,"index") && !(strstr(data,"img")))
 		{
 			printf("getting index\n");
-			char str[] = "HTTP/1.1 200 OK\nContent-length: 117\nContent-Type: text/html\n\n<html><head><link rel=stylesheet type=text/css href=mystyle.css></head><body><H1>Hello world!!</H1><img src=img.png/></body></html>";
-			size = sizeof(str);
-			printf("response = \n%s\n", str);
-			printf("size = %d\n", size);
-			send(clientSock, str,size,1);
+			struct http_response resp = gen_http_response("HTTP/1.1 200 OK", "text/html","<html><head><link rel=stylesheet type=text/css href=mystyle.css></head><body><H1>Hello world!!</H1><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==\" alt=\"Red dot\"></body></html>");
+			char *respStr = gen_http_response_str(resp);
+			printf("response = \n%s\n", respStr);
+			send(clientSock,respStr,getLengthOfCharArray(respStr),1);
+			free(respStr);
+
 		}
 		else if(strstr(data,"img"))
 		{
-			char httpstr[] = "HTTP/1.1 200 OK\nContent-length:  377\nContent-Type: image/png\nContent-Transfer-Encoding: binary\ncharset=ISO-8859-4\n\n";
+			char httpstr[] = "HTTP/1.1 200 OK\nContent-length: 377\nContent-Type: image/png\nContent-Transfer-Encoding: binary\ncharset=ISO-8859-4\n\n";
 			printf("getting img\n");
 			size = 377 + sizeof(httpstr);
 			char str[size];
@@ -127,4 +130,9 @@ void socket_server() {
 	}
 	END:
 	vTaskDelete(NULL);
+}
+
+void sendHTTPResponse(int clientSock, struct http_response resp)
+{
+	// send(clientSock,respStr,getLengthOfCharArray(respStr))
 }
