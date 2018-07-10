@@ -87,25 +87,26 @@ void socket_server()
 		else if (strstr(data,"index") && !(strstr(data,"img")))
 		{
 			printf("getting index\n");
-			struct http_response resp = gen_http_response("HTTP/1.1 200 OK", "text/html","<html><head><link rel=stylesheet type=text/css href=mystyle.css></head><body><H1>Hello world!!</H1><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==\" alt=\"Red dot\"></body></html>");
+			struct http_response resp = gen_http_response("HTTP/1.1 200 OK", "text/html", getFileAsStr("/sdcard/test.html"));
 			char *respStr = gen_http_response_str(resp);
+			printf("size = %d\n",getLengthOfCharArray(respStr));
 			printf("response = \n%s\n", respStr);
 			send(clientSock,respStr,getLengthOfCharArray(respStr),1);
-			free(respStr);
+			// free(respStr);
 
 		}
-		else if(strstr(data,"img"))
-		{
-			char httpstr[] = "HTTP/1.1 200 OK\nContent-length: 377\nContent-Type: image/png\nContent-Transfer-Encoding: binary\ncharset=ISO-8859-4\n\n";
-			printf("getting img\n");
-			size = 377 + sizeof(httpstr);
-			char str[size];
-			strcpy(str, httpstr);
-			strcat(str, img);
-			printf("response = \n%s\n", str);
-			printf("size = %d\n", size);
-			send(clientSock, str,size,1);
-		}
+		// else if(strstr(data,"img"))
+		// {
+		// 	char httpstr[] = "HTTP/1.1 200 OK\nContent-length: 377\nContent-Type: image/png\nContent-Transfer-Encoding: binary\ncharset=ISO-8859-4\n\n";
+		// 	printf("getting img\n");
+		// 	size = 377 + sizeof(httpstr);
+		// 	char str[size];
+		// 	strcpy(str, httpstr);
+		// 	strcat(str, img);
+		// 	printf("response = \n%s\n", str);
+		// 	printf("size = %d\n", size);
+		// 	send(clientSock, str,size,1);
+		// }
 		else
 		{
 			printf("404");

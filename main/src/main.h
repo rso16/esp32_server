@@ -13,5 +13,6 @@
 #include "../lib/socket/socket.h"
 #include "../lib/http/http.h"
 #include "../lib/functions/functions.h"
+#include "../lib/sd/sd.h"
 
 void app_main();
