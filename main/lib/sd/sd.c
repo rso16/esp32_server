@@ -190,59 +190,10 @@ fpos_t getPosOfLine(char *filename, int lineNO)
   return pos;
 }
 
-// char *getLineAtPos(char *filename, fpos_t pos)
-// {
-//   FILE *f;
-//   // int size = getLineSize(filename, )
-//   f = fopen(filename, "r");
-//   if (f == NULL)
-//   {
-//       ESP_LOGE(TAG, "Failed to open file for reading");
-//       return "403";
-//   }
-//   else
-//   {
-//     fsetpos(f, &pos);
-//
-//   }
-// }
-
-// int getLineSizeAtPos(char *filename, fpos_t pos)
-// {
-//   FILE *f;
-//   fpos_t curPos = 0;
-//   char c = 0;
-//   f = fopen(fileName, "r");
-//   int size = 0;
-//   if (f == NULL)
-//   {
-//       ESP_LOGE(TAG, "Failed to open file for reading");
-//       return "403";
-//   }
-//   else
-//   {
-//     while(!feof(f))
-//     {
-//       if(fgetpos(f,currPos) == pos)
-//       {
-//         while(c != 0x0A)
-//         {
-//           size++;
-//           c = fgetc(f);
-//         }
-//         return size;
-//       }
-//       c = fgetc(f);
-//     }
-//   }
-//   return size;
-// }
-
 char *getFileAsStr(char *filename)
 {
   char *fileStr = malloc(sizeof(char) * getFileSize(filename));
   int amountOfLines = getAmountOfLines(filename);
-  // printf("amount of lines = %d\n", amountOfLines);
   strcpy(fileStr, "");
   for (size_t i = 0; i <= amountOfLines; i++)
   {
@@ -250,8 +201,6 @@ char *getFileAsStr(char *filename)
   }
   return fileStr;
 }
-
-
 
 int getAmountOfLines(char fileName[])
 {
