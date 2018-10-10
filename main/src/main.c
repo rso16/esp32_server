@@ -2,7 +2,7 @@
 void app_main()
 {
   printf("%s\n", "starting ...");
-  initSD();
+  // initSD();
   nvs_flash_init();
   wifi_conn_init();
   socket_server();
