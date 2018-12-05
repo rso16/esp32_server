@@ -6,9 +6,13 @@
 #include "esp_spi_flash.h"
 #include "nvs_flash.h"
 #include "nvs.h"
+#include <sdkconfig.h>
 
 //my libs
 #include "../lib/wifi/wifi.h"
 #include "../lib/socket/socket.h"
+#include "../lib/http/http.h"
+#include "../lib/functions/functions.h"
+#include "../lib/sd/sd.h"
 
 void app_main();
